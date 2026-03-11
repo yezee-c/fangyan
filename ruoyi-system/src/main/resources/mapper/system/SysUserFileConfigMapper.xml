@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysUserFileConfigMapper">
+    
+    <resultMap type="SysUserFileConfig" id="SysUserFileConfigResult">
+        <result property="userId"    column="user_id"    />
+        <result property="maxFileSize"    column="max_file_size"    />
+        <result property="maxStorage"    column="max_storage"    />
+        <result property="usedStorage"    column="used_storage"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="userName"    column="user_name"    />
+        <result property="nickName"    column="nick_name"    />
+    </resultMap>
+
+    <sql id="selectSysUserFileConfigVo">
+        select c.user_id, c.max_file_size, c.max_storage, c.used_storage, c.create_time, c.update_time,
+               u.user_name, u.nick_name
+        from sys_user_file_config c
+        left join sys_user u on c.user_id = u.user_id
+    </sql>
+
+    <select id="selectSysUserFileConfigList" parameterType="SysUserFileConfig" resultMap="SysUserFileConfigResult">
+        <include refid="selectSysUserFileConfigVo"/>
+        <where>  
+            <if test="userId != null "> and c.user_id = #{userId}</if>
+            <if test="userName != null and userName != ''"> and u.user_name like concat('%', #{userName}, '%')</if>
+            <if test="nickName != null and nickName != ''"> and u.nick_name like concat('%', #{nickName}, '%')</if>
+        </where>
+        order by c.create_time desc
+    </select>
+    
+    <select id="selectSysUserFileConfigByUserId" parameterType="Long" resultMap="SysUserFileConfigResult">
+        <include refid="selectSysUserFileConfigVo"/>
+        where c.user_id = #{userId}
+    </select>
+        
+    <insert id="insertSysUserFileConfig" parameterType="SysUserFileConfig">
+        insert into sys_user_file_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="maxFileSize != null">max_file_size,</if>
+            <if test="maxStorage != null">max_storage,</if>
+            <if test="usedStorage != null">used_storage,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="maxFileSize != null">#{maxFileSize},</if>
+            <if test="maxStorage != null">#{maxStorage},</if>
+            <if test="usedStorage != null">#{usedStorage},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysUserFileConfig" parameterType="SysUserFileConfig">
+        update sys_user_file_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="maxFileSize != null">max_file_size = #{maxFileSize},</if>
+            <if test="maxStorage != null">max_storage = #{maxStorage},</if>
+            <if test="usedStorage != null">used_storage = #{usedStorage},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteSysUserFileConfigByUserId" parameterType="Long">
+        delete from sys_user_file_config where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteSysUserFileConfigByUserIds" parameterType="Long">
+        delete from sys_user_file_config where user_id in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <update id="increaseUsedStorage">
+        update sys_user_file_config
+        set used_storage = used_storage + #{size}
+        where user_id = #{userId}
+    </update>
+
+    <update id="decreaseUsedStorage">
+        update sys_user_file_config
+        set used_storage = used_storage - #{size}
+        where user_id = #{userId} and used_storage >= #{size}
+    </update>
+</mapper>

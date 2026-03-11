@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysCharacterInfoMapper">
+    
+    <resultMap type="SysCharacterInfo" id="SysCharacterInfoResult">
+        <result property="characterId"    column="character_id"    />
+        <result property="characterName"    column="character_name"    />
+        <result property="characterTitle"    column="character_title"    />
+        <result property="characterIntro"    column="character_intro"    />
+        <result property="characterDescription"    column="character_description"    />
+        <result property="birthDate"    column="birth_date"    />
+        <result property="avatarFileId"    column="avatar_file_id"    />
+        <result property="coverFileId"    column="cover_file_id"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSysCharacterInfoVo">
+        select character_id, character_name, character_title, character_intro, character_description, 
+               birth_date, avatar_file_id, cover_file_id, sort_order, status, 
+               create_by, create_time, update_by, update_time, remark
+        from sys_character_info
+    </sql>
+
+    <select id="selectSysCharacterInfoList" parameterType="SysCharacterInfo" resultMap="SysCharacterInfoResult">
+        <include refid="selectSysCharacterInfoVo"/>
+        <where>  
+            <if test="characterName != null  and characterName != ''"> and character_name like concat('%', #{characterName}, '%')</if>
+            <if test="characterTitle != null  and characterTitle != ''"> and character_title like concat('%', #{characterTitle}, '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by sort_order asc, create_time desc
+    </select>
+    
+    <select id="selectSysCharacterInfoByCharacterId" parameterType="Long" resultMap="SysCharacterInfoResult">
+        <include refid="selectSysCharacterInfoVo"/>
+        where character_id = #{characterId}
+    </select>
+        
+    <insert id="insertSysCharacterInfo" parameterType="SysCharacterInfo" useGeneratedKeys="true" keyProperty="characterId">
+        insert into sys_character_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="characterName != null and characterName != ''">character_name,</if>
+            <if test="characterTitle != null">character_title,</if>
+            <if test="characterIntro != null">character_intro,</if>
+            <if test="characterDescription != null">character_description,</if>
+            <if test="birthDate != null">birth_date,</if>
+            <if test="avatarFileId != null">avatar_file_id,</if>
+            <if test="coverFileId != null">cover_file_id,</if>
+            <if test="sortOrder != null">sort_order,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="characterName != null and characterName != ''">#{characterName},</if>
+            <if test="characterTitle != null">#{characterTitle},</if>
+            <if test="characterIntro != null">#{characterIntro},</if>
+            <if test="characterDescription != null">#{characterDescription},</if>
+            <if test="birthDate != null">#{birthDate},</if>
+            <if test="avatarFileId != null">#{avatarFileId},</if>
+            <if test="coverFileId != null">#{coverFileId},</if>
+            <if test="sortOrder != null">#{sortOrder},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCharacterInfo" parameterType="SysCharacterInfo">
+        update sys_character_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="characterName != null and characterName != ''">character_name = #{characterName},</if>
+            <if test="characterTitle != null">character_title = #{characterTitle},</if>
+            <if test="characterIntro != null">character_intro = #{characterIntro},</if>
+            <if test="characterDescription != null">character_description = #{characterDescription},</if>
+            <if test="birthDate != null">birth_date = #{birthDate},</if>
+            <if test="avatarFileId != null">avatar_file_id = #{avatarFileId},</if>
+            <if test="coverFileId != null">cover_file_id = #{coverFileId},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where character_id = #{characterId}
+    </update>
+
+    <delete id="deleteSysCharacterInfoByCharacterId" parameterType="Long">
+        delete from sys_character_info where character_id = #{characterId}
+    </delete>
+
+    <delete id="deleteSysCharacterInfoByCharacterIds" parameterType="String">
+        delete from sys_character_info where character_id in 
+        <foreach item="characterId" collection="array" open="(" separator="," close=")">
+            #{characterId}
+        </foreach>
+    </delete>
+</mapper>

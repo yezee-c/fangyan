@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PthDigitalResourceMapper">
+    
+    <resultMap type="PthDigitalResource" id="PthDigitalResourceResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="url" column="url"/>
+        <result property="size" column="size"/>
+        <result property="extension" column="extension"/>
+        <result property="description" column="description"/>
+        <result property="createById" column="create_by_id"/>
+        <result property="createByName" column="create_by_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <sql id="selectPthDigitalResourceVo">
+        select id, name, type, url, size, extension, description, create_by_id, create_by_name, create_time, update_time from pth_digital_resource
+    </sql>
+    
+    <select id="selectPthDigitalResourceById" parameterType="Long" resultMap="PthDigitalResourceResult">
+        <include refid="selectPthDigitalResourceVo"/>
+        where id = #{id}
+    </select>
+    
+    <select id="selectPthDigitalResourceList" parameterType="PthDigitalResource" resultMap="PthDigitalResourceResult">
+        <include refid="selectPthDigitalResourceVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="size != null "> and size = #{size}</if>
+            <if test="extension != null  and extension != ''"> and extension = #{extension}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="createById != null "> and create_by_id = #{createById}</if>
+            <if test="createByName != null  and createByName != ''"> and create_by_name like concat('%', #{createByName}, '%')</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <insert id="insertPthDigitalResource" parameterType="PthDigitalResource" useGeneratedKeys="true" keyProperty="id">
+        insert into pth_digital_resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="type != null and type != ''">type,</if>
+            <if test="url != null and url != ''">url,</if>
+            <if test="size != null">size,</if>
+            <if test="extension != null and extension != ''">extension,</if>
+            <if test="description != null">description,</if>
+            <if test="createById != null">create_by_id,</if>
+            <if test="createByName != null and createByName != ''">create_by_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="url != null and url != ''">#{url},</if>
+            <if test="size != null">#{size},</if>
+            <if test="extension != null and extension != ''">#{extension},</if>
+            <if test="description != null">#{description},</if>
+            <if test="createById != null">#{createById},</if>
+            <if test="createByName != null and createByName != ''">#{createByName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+    
+    <update id="updatePthDigitalResource" parameterType="PthDigitalResource">
+        update pth_digital_resource
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="size != null">size = #{size},</if>
+            <if test="extension != null and extension != ''">extension = #{extension},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="createById != null">create_by_id = #{createById},</if>
+            <if test="createByName != null and createByName != ''">create_by_name = #{createByName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    
+    <delete id="deletePthDigitalResourceById" parameterType="Long">
+        delete from pth_digital_resource where id = #{id}
+    </delete>
+    
+    <delete id="deletePthDigitalResourceByIds" parameterType="Long">
+        delete from pth_digital_resource where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

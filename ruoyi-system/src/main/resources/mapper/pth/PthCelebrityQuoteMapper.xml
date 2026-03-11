@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pth.mapper.PthCelebrityQuoteMapper">
+    
+    <resultMap type="PthCelebrityQuote" id="PthCelebrityQuoteResult">
+        <result property="quoteId"    column="quote_id"    />
+        <result property="celebrityName"    column="celebrity_name"    />
+        <result property="photoUrl"    column="photo_url"    />
+        <result property="quoteContent"    column="quote_content"    />
+        <result property="biography"    column="biography"    />
+        <result property="achievements"    column="achievements"    />
+        <result property="connection"    column="connection"    />
+        <result property="displayOrder"    column="display_order"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectPthCelebrityQuoteVo">
+        select quote_id, celebrity_name, photo_url, quote_content, biography, achievements, connection, display_order, status, del_flag, create_by, create_time, update_by, update_time, remark from pth_celebrity_quote
+    </sql>
+
+    <select id="selectPthCelebrityQuoteList" parameterType="PthCelebrityQuote" resultMap="PthCelebrityQuoteResult">
+        <include refid="selectPthCelebrityQuoteVo"/>
+        <where>  
+            <if test="celebrityName != null  and celebrityName != ''"> and celebrity_name like concat('%', #{celebrityName}, '%')</if>
+            <if test="quoteContent != null  and quoteContent != ''"> and quote_content like concat('%', #{quoteContent}, '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            and del_flag = '0'
+        </where>
+        order by display_order
+    </select>
+    
+    <select id="selectPthCelebrityQuoteByQuoteId" parameterType="Long" resultMap="PthCelebrityQuoteResult">
+        <include refid="selectPthCelebrityQuoteVo"/>
+        where quote_id = #{quoteId}
+    </select>
+
+    <select id="selectDisplayQuoteList" resultMap="PthCelebrityQuoteResult">
+        <include refid="selectPthCelebrityQuoteVo"/>
+        where status = '0' and del_flag = '0'
+        order by display_order
+    </select>
+
+    <insert id="insertPthCelebrityQuote" parameterType="PthCelebrityQuote" useGeneratedKeys="true" keyProperty="quoteId">
+        insert into pth_celebrity_quote
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="celebrityName != null and celebrityName != ''">celebrity_name,</if>
+            <if test="photoUrl != null">photo_url,</if>
+            <if test="quoteContent != null and quoteContent != ''">quote_content,</if>
+            <if test="biography != null">biography,</if>
+            <if test="achievements != null">achievements,</if>
+            <if test="connection != null">connection,</if>
+            <if test="displayOrder != null">display_order,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="celebrityName != null and celebrityName != ''">#{celebrityName},</if>
+            <if test="photoUrl != null">#{photoUrl},</if>
+            <if test="quoteContent != null and quoteContent != ''">#{quoteContent},</if>
+            <if test="biography != null">#{biography},</if>
+            <if test="achievements != null">#{achievements},</if>
+            <if test="connection != null">#{connection},</if>
+            <if test="displayOrder != null">#{displayOrder},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createB != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePthCelebrityQuote" parameterType="PthCelebrityQuote">
+        update pth_celebrity_quote
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="celebrityName != null and celebrityName != ''">celebrity_name = #{celebrityName},</if>
+            <if test="photoUrl != null">photo_url = #{photoUrl},</if>
+            <if test="quoteContent != null and quoteContent != ''">quote_content = #{quoteContent},</if>
+            <if test="biography != null">biography = #{biography},</if>
+            <if test="achievements != null">achievements = #{achievements},</if>
+            <if test="connection != null">connection = #{connection},</if>
+            <if test="displayOrder != null">display_order = #{displayOrder},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where quote_id = #{quoteId}
+    </update>
+
+    <delete id="deletePthCelebrityQuoteByQuoteId" parameterType="Long">
+        update pth_celebrity_quote set del_flag = '2' where quote_id = #{quoteId}
+    </delete>
+
+    <delete id="deletePthCelebrityQuoteByQuoteIds" parameterType="String">
+        update pth_celebrity_quote set del_flag = '2' where quote_id in 
+        <foreach item="quoteId" collection="array" open="(" separator="," close=")">
+            #{quoteId}
+        </foreach>
+    </delete>
+</mapper>

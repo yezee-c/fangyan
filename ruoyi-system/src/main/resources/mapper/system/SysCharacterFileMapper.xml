@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysCharacterFileMapper">
+    
+    <resultMap type="SysCharacterFile" id="SysCharacterFileResult">
+        <result property="id"    column="id"    />
+        <result property="characterId"    column="character_id"    />
+        <result property="fileId"    column="file_id"    />
+        <result property="fileType"    column="file_type"    />
+        <result property="fileCategory"    column="file_category"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="description"    column="description"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <resultMap type="SysCharacterFile" id="SysCharacterFileWithInfoResult" extends="SysCharacterFileResult">
+        <association property="fileInfo" column="file_id" javaType="SysFileInfo" resultMap="com.ruoyi.system.mapper.SysFileInfoMapper.SysFileInfoResult" />
+    </resultMap>
+
+    <select id="selectFilesByCharacterId" resultMap="SysCharacterFileWithInfoResult">
+        select cf.*, 
+               f.file_id, f.file_name, f.original_name, f.file_path, f.file_size, 
+               f.file_type as f_file_type, f.content_type, f.file_ext, f.bucket_name
+        from sys_character_file cf
+        left join sys_file_info f on cf.file_id = f.file_id
+        where cf.character_id = #{characterId}
+        order by cf.sort_order asc, cf.create_time desc
+    </select>
+
+    <select id="selectFilesByCharacterIdAndType" resultMap="SysCharacterFileWithInfoResult">
+        select cf.*, 
+               f.file_id, f.file_name, f.original_name, f.file_path, f.file_size, 
+               f.file_type as f_file_type, f.content_type, f.file_ext, f.bucket_name
+        from sys_character_file cf
+        left join sys_file_info f on cf.file_id = f.file_id
+        where cf.character_id = #{characterId} and cf.file_type = #{fileType}
+        order by cf.sort_order asc, cf.create_time desc
+    </select>
+
+    <insert id="insertCharacterFile" parameterType="SysCharacterFile">
+        insert into sys_character_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="characterId != null">character_id,</if>
+            <if test="fileId != null">file_id,</if>
+            <if test="fileType != null and fileType != ''">file_type,</if>
+            <if test="fileCategory != null">file_category,</if>
+            <if test="sortOrder != null">sort_order,</if>
+            <if test="description != null">description,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="characterId != null">#{characterId},</if>
+            <if test="fileId != null">#{fileId},</if>
+            <if test="fileType != null and fileType != ''">#{fileType},</if>
+            <if test="fileCategory != null">#{fileCategory},</if>
+            <if test="sortOrder != null">#{sortOrder},</if>
+            <if test="description != null">#{description},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <insert id="batchInsertCharacterFile" parameterType="java.util.List">
+        insert into sys_character_file (character_id, file_id, file_type, file_category, sort_order, description, create_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.characterId}, #{item.fileId}, #{item.fileType}, #{item.fileCategory}, #{item.sortOrder}, #{item.description}, #{item.createTime})
+        </foreach>
+    </insert>
+
+    <delete id="deleteCharacterFileById" parameterType="Long">
+        delete from sys_character_file where id = #{id}
+    </delete>
+
+    <delete id="deleteCharacterFileByCharacterId" parameterType="Long">
+        delete from sys_character_file where character_id = #{characterId}
+    </delete>
+
+    <delete id="deleteCharacterFileByFileId" parameterType="Long">
+        delete from sys_character_file where file_id = #{fileId}
+    </delete>
+</mapper>
